@@ -21,35 +21,95 @@ def mostrar_lista_clave(lista:list, clave:str):
     for jugador in lista:
         mensaje = "{0} - {1}".format(jugador["nombre"], jugador[clave])
         contenido += mensaje+"\n"
-    print(contenido)
+    print(contenido.rstrip())
+
+#mostrar_lista_clave(lista_dream_team, "posicion")
 
 def mostrar_jugador_estadistica(lista:list):
     indice = input("Ingrese el indice. ")
     indice = int(indice)
+    contenido = "Nombre: {0}\n".format(lista[indice]["nombre"])
     for clave, valor in lista[indice]["estadisticas"].items():
-        print(f"{(clave.capitalize())}: {valor}")
+        mensaje = "{0}: {1}".format(clave.capitalize(), valor)
+        contenido += mensaje +"\n"
+    print(contenido.rstrip())
 
+#mostrar_jugador_estadistica(lista_dream_team)
+def validar_jugador_ingresado(lista:list):
+    jugadores = str([(diccionario["nombre"]).lower()  for diccionario in lista])
+    jugador_buscado = input("Ingrese el nombre del jugador.")
+    while not (re.search(jugador_buscado.lower(), jugadores)):
+        jugador_buscado = input("Error. Ingrese el nombre del jugador.")
+    for jugador in lista:
+        if re.search(jugador_buscado.lower(), (jugador["nombre"]).lower()):
+            nombre = jugador["nombre"]
+    return nombre
 
 def mostrar_jugador_logros(lista:list):
-
-    
-    jugadores = str([(diccionario["nombre"]).lower()  for diccionario in lista])
-    jugador = input("Ingrese el nombre del jugador.")
-    while not (re.search(jugador.lower(), jugadores)):
-        jugador = input("Error. Ingrese el nombre del jugador.")
-
+    jugador_buscado = validar_jugador_ingresado(lista)
     for indice in range(len(lista)):
-        if re.search(jugador.lower(), (lista[indice]["nombre"]).lower()):
+        if jugador_buscado == lista[indice]["nombre"]:
             jugador_encontrado = indice
-            print(jugador_encontrado)
 
-    
     mensaje = "{0} - {1}".format(lista[jugador_encontrado]["nombre"], 
                                  lista[jugador_encontrado]["logros"])
+    return mensaje
+
+# mostrar_jugador_logros(lista_dream_team)
+
+'''
+Calcular y mostrar el promedio de puntos por partido de todo el equipo del Dream
+Team, ordenado por nombre de manera ascendente
+'''
+def ordenar_alfabeticamente_por_clave_ascendente(lista:list, clave:str):
+    lista_ordenada = lista[:]
+    rango_a = len(lista_ordenada)
+    flag_swap = True
+
+    while(flag_swap):
+        flag_swap = False
+        rango_a = rango_a - 1
+
+        for indice_A in range(rango_a):
+            if  lista_ordenada[indice_A][clave][0] > lista_ordenada[indice_A+1][clave][0]:
+                lista_ordenada[indice_A],lista_ordenada[indice_A+1] = lista_ordenada[indice_A+1],lista_ordenada[indice_A]
+                flag_swap = True
+
+    return lista_ordenada
+
+def calcular_y_mostrar_promedio_puntos_orden_alfa_asc(lista:list):
+    lista_ordenada = ordenar_alfabeticamente_por_clave_ascendente(lista,"nombre")
+    suma = 0
+    contenido=""
+
+    for jugador in lista_ordenada:
+        suma += jugador["estadisticas"]["promedio_puntos_por_partido"]
+        mensaje = "{0}: {1}".format(jugador["nombre"], jugador["estadisticas"]["promedio_puntos_por_partido"])
+        contenido += mensaje+ "\n"
     
-    print(mensaje)
+    promedio = suma/ len(lista_ordenada)
+    contenido += "Promedio del equipo: "+str(promedio)
+    print(contenido)
 
-mostrar_jugador_logros(lista_dream_team)
+#calcular_y_mostrar_promedio_puntos_orden_alfa_asc(lista_dream_team)
 
-# jugadores = [diccionario["nombre"]  for diccionario in lista_dream_team]
-# print(jugadores)
+'''
+Permitir al usuario ingresar el nombre de un jugador y mostrar si ese jugador es
+miembro del Salón de la Fama del Baloncesto.
+'''
+def es_miembro_salon_de_la_fama(lista:list):
+    logros = mostrar_jugador_logros(lista)
+    if "Baloncesto Universitario" in logros:
+        print("Baloncesto Universitario")
+    elif "Miembro del Salón de la Fama del Baloncesto" in logros:
+        print("fama comun")
+    else:
+        print("nada")
+
+#es_miembro_salon_de_la_fama(lista_dream_team)
+
+
+
+
+
+
