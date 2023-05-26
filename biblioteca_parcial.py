@@ -14,7 +14,7 @@ def leer_archivo(nombre_archivo: str):
     
     return lista
 
-lista_dream_team = leer_archivo(r"C:\Users\Torre\Documents\Programacion\Clase_11_Parcial\dt.json")
+lista_dream_team = leer_archivo(r"C:\Users\Torre\Documents\Parcial_Programacion_I\pp_lab1_Torres_Almada_Marcelo\dt.json")
 
 def mostrar_lista_clave(lista:list, clave:str):
     contenido =""
@@ -81,7 +81,6 @@ def calcular_y_mostrar_promedio_puntos_orden_alfa_asc(lista:list):
     lista_ordenada = ordenar_alfabeticamente_por_clave_ascendente(lista,"nombre")
     suma = 0
     contenido=""
-
     for jugador in lista_ordenada:
         suma += jugador["estadisticas"]["promedio_puntos_por_partido"]
         mensaje = "{0}: {1}".format(jugador["nombre"], jugador["estadisticas"]["promedio_puntos_por_partido"])
@@ -108,8 +107,36 @@ def es_miembro_salon_de_la_fama(lista:list):
 
 #es_miembro_salon_de_la_fama(lista_dream_team)
 
+'''
+7) Calcular y mostrar el jugador con la mayor cantidad de rebotes totales.
+8) Calcular y mostrar el jugador con el mayor porcentaje de tiros de campo.
+9) Calcular y mostrar el jugador con la mayor cantidad de asistencias totales.
+'''
 
-
-
+def calcular_y_mostrar_maximo_estadistica_clave(lista:list, clave:str):
+    max_clave = lista[0]["estadisticas"][clave]
+    lista_maximos=[]
+    for jugador in lista[1:]:
+        clave_valor = jugador["estadisticas"][clave]
+        if(clave_valor > max_clave ):
+            max_clave = clave_valor
+            lista_maximos.clear()
+            lista_maximos.append(jugador["nombre"])
+        elif (clave_valor == max_clave ):
+            max_clave = clave_valor
+            lista_maximos.append(" y "+ jugador["nombre"])
+    
+    mensaje="La estadistica de mayor {0} pertenece a ".format(clave)
+    if len(lista_maximos) ==1:
+        mensaje += lista_maximos[0]
+    else:
+        for maximo in lista_maximos:
+            mensaje += "{0}".format(maximo)
+    mensaje+= " con un valor de {0}.".format(str(max_clave))
+    print(mensaje)
+    
+    # print(maximo) 
+    # print(lista[indice_max]["nombre"]+str(lista[indice_max]["estadisticas"][clave]))       
+    # return lista[indice_max]
 
 
