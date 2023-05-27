@@ -115,7 +115,7 @@ def es_miembro_salon_de_la_fama(lista:list):
 
 def calcular_y_mostrar_maximo_estadistica_clave(lista:list, clave:str):
     max_clave = lista[0]["estadisticas"][clave]
-    lista_maximos=[]
+    lista_maximos=[lista[0]["nombre"]]
     for jugador in lista[1:]:
         clave_valor = jugador["estadisticas"][clave]
         if(clave_valor > max_clave ):
@@ -126,7 +126,7 @@ def calcular_y_mostrar_maximo_estadistica_clave(lista:list, clave:str):
             max_clave = clave_valor
             lista_maximos.append(" y "+ jugador["nombre"])
     
-    mensaje="La estadistica de mayor {0} pertenece a ".format(clave)
+    mensaje="La estadistica de mayor {0} pertenece a ".format(clave.replace("_", " "))
     if len(lista_maximos) ==1:
         mensaje += lista_maximos[0]
     else:
@@ -135,8 +135,188 @@ def calcular_y_mostrar_maximo_estadistica_clave(lista:list, clave:str):
     mensaje+= " con un valor de {0}.".format(str(max_clave))
     print(mensaje)
     
-    # print(maximo) 
-    # print(lista[indice_max]["nombre"]+str(lista[indice_max]["estadisticas"][clave]))       
-    # return lista[indice_max]
+#calcular_y_mostrar_maximo_estadistica_clave(lista_dream_team, "promedio_puntos_por_partido")
+'''
+10) Permitir al usuario ingresar un valor y mostrar los jugadores que han promediado
+más puntos por partido que ese valor.
+11) Permitir al usuario ingresar un valor y mostrar los jugadores que han promediado
+más rebotes por partido que ese valor.
+12) Permitir al usuario ingresar un valor y mostrar los jugadores que han promediado
+más asistencias por partido que ese valor.
+'''
+
+def jugador_con_valor_mayor_al_ingresado(lista:list, clave:str):
+    valor_ingresado = input("Ingrese un valor. ")
+    valor_ingresado = float(valor_ingresado)
+    flag_primer_ingreso = 0
+    mensaje = ("En cuanto a {0} los siguientes jugadores superan el valor" 
+               " ingresado :").format(clave.replace("_", " "))
+
+    for jugador in lista:
+        if jugador["estadisticas"][clave] > valor_ingresado:
+            mensaje += "\n{0} con un valor de {1}.".format(jugador["nombre"], 
+                                                              jugador["estadisticas"][clave])
+            flag_primer_ingreso = 1
+        
+    if flag_primer_ingreso ==0:
+        mensaje = "No hay ningun jugador que supere ese {0}.".format(clave.replace("_", " "))
+    
+    print(mensaje)
+   
+'''
+16) Calcular y mostrar el promedio de puntos por partido del equipo excluyendo al
+jugador con la menor cantidad de puntos por partido.
+'''
+def calcular_y_mostrar_minimo_estadistica_clave(lista:list, clave:str):
+    min_clave = lista[0]["estadisticas"][clave]
+    contador = 0
+    for jugador in lista[1:]:
+        clave_valor = jugador["estadisticas"][clave]
+        if(clave_valor < min_clave ):
+            min_clave = clave_valor
+            contador=1
+        elif (clave_valor == min_clave ):
+            min_clave = clave_valor
+            contador += 1
+    return contador*clave_valor
+
+#print(calcular_y_mostrar_minimo_estadistica_clave(lista_dream_team, "promedio_puntos_por_partido"))
 
 
+def calcular_promedio_excluyendo_al_minimo(lista:list, clave:str):
+    suma = -calcular_y_mostrar_minimo_estadistica_clave(lista_dream_team, clave)
+    for jugador in lista:
+        suma += jugador["estadisticas"][clave]
+    promedio = suma/ (len(lista)-1)
+    contenido = "Promedio del equipo: "+str(promedio)
+    print(contenido)
+
+    
+#calcular_promedio_excluyendo_al_minimo(lista_dream_team, "promedio_puntos_por_partido")
+
+'''
+17) Calcular y mostrar el jugador con la mayor cantidad de logros obtenidos
+'''
+def calcular_y_mostrar_jugador_mas_logros(lista:list):
+    max_clave = len(lista[0]["logros"])
+    lista_maximos=[lista[0]["nombre"]]
+    for jugador in lista[1:]:
+        clave_valor = len(jugador["logros"])
+        if(clave_valor > max_clave ):
+            max_clave = clave_valor
+            lista_maximos.clear()
+            lista_maximos.append(jugador["nombre"])
+        elif (clave_valor == max_clave ):
+            max_clave = clave_valor
+            lista_maximos.append(" y "+ jugador["nombre"])
+    
+    mensaje="El jugador con mayor cantidad de logros es "
+    if len(lista_maximos) ==1:
+        mensaje += lista_maximos[0]
+    else:
+        for maximo in lista_maximos:
+            mensaje += "{0}".format(maximo)
+    mensaje+= " con un valor de {0}.".format(str(max_clave))
+    print(mensaje)
+
+#calcular_y_mostrar_jugador_mas_logros(lista_dream_team)
+
+'''
+19) Calcular y mostrar el jugador con la mayor cantidad de temporadas jugadas
+'''
+#calcular_y_mostrar_maximo_estadistica_clave(lista_dream_team, "temporadas")
+ 
+'''
+20) Permitir al usuario ingresar un valor y mostrar los jugadores , ordenados por
+posición en la cancha, que hayan tenido un porcentaje de tiros de campo superior a
+ese valor.
+'''
+def jugador_con_valor_mayor_al_ingresado2(lista:list, clave:str):
+    valor_ingresado = input("Ingrese un valor. ")
+    valor_ingresado = float(valor_ingresado)
+    flag_primer_ingreso = 0
+    mensaje = ("En cuanto a {0}, los siguientes jugadores superan el valor" 
+               " ingresado :").format(clave.replace("_", " "))
+
+    for jugador in lista:
+        if jugador["estadisticas"][clave] > valor_ingresado:
+            mensaje += "\n{0} ({2}) con un valor de {1}.".format(jugador["nombre"], 
+                                                              jugador["estadisticas"][clave],
+                                                              jugador["posicion"])
+            flag_primer_ingreso = 1
+        
+    if flag_primer_ingreso ==0:
+        mensaje = "No hay ningun jugador que supere ese {0}.".format(clave.replace("_", " "))
+    
+    print(mensaje)
+
+def mostrar_jugadores_mayor_al_dato_ingresado_ordenado_por_posicion(lista):
+    lista_ordenada = ordenar_alfabeticamente_por_clave_ascendente(lista,"posicion")
+    jugador_con_valor_mayor_al_ingresado2(lista_ordenada, "porcentaje_tiros_de_campo")
+
+#mostrar_jugadores_mayor_al_dato_ingresado_ordenado_por_posicion(lista_dream_team)
+
+'''
+Calcular de cada jugador cuál es su posición en cada uno de los siguientes ranking
+● Puntos
+● Rebotes
+● Asistencias
+● Robos
+'''
+
+def ordenar_y_listar_por_clave(lista_original:list, clave:str)->list:
+    lista_de = []
+    lista_iz = []
+
+    if(len(lista_original)<=1):
+        return lista_original
+    else:
+        pivot = lista_original[0]["estadisticas"][clave]
+        for jugador in lista_original[1:]:
+            if(jugador["estadisticas"][clave] < pivot):
+                lista_de.append(jugador)
+            else:
+                lista_iz.append(jugador)
+    
+    lista_iz = ordenar_y_listar_por_clave(lista_iz, clave)
+    lista_iz.append(lista_original[0]) 
+    lista_de = ordenar_y_listar_por_clave(lista_de, clave)
+    lista_iz.extend(lista_de) 
+    return lista_iz
+
+def crear_lista_de_nombres(lista:list):
+    lista_nombres=[]
+    for jugador in lista:
+        lista_nombres.append(jugador["nombre"])
+    
+    return lista_nombres
+
+def guardar_archivo(nombre_archivo, contenido):
+    try:
+        with open(nombre_archivo, mode='w+') as archivo:
+            archivo.write(contenido)
+            print(f'Se creó el archivo: {nombre_archivo}')
+            return True
+    except Exception as e:
+        print(f'Error al crear el archivo: {nombre_archivo}. {str(e)}')
+        return False
+
+
+def crear_ranking(lista:list):
+    lista_puntos_totales= crear_lista_de_nombres(ordenar_y_listar_por_clave(lista, "puntos_totales"))
+    lista_rebotes_totales= crear_lista_de_nombres(ordenar_y_listar_por_clave(lista, "rebotes_totales"))
+    lista_asistencias_totales= crear_lista_de_nombres(ordenar_y_listar_por_clave(lista, "asistencias_totales"))
+    lista_robos_totales= crear_lista_de_nombres(ordenar_y_listar_por_clave(lista, "robos_totales"))
+    contenido = "Jugador| Puntos| Rebotes| Asistencias| Robos"
+  
+    for indice in range(len(lista_puntos_totales)):
+        contenido += "\n{0}| {1}| {2}| {3}| {4}".format(lista_puntos_totales[indice],
+                                                                             1+lista_puntos_totales.index(lista_puntos_totales[indice]),
+                                                                             1+lista_rebotes_totales.index(lista_puntos_totales[indice]),
+                                                                             1+lista_asistencias_totales.index(lista_puntos_totales[indice]),
+                                                                             1+lista_robos_totales.index(lista_puntos_totales[indice]))
+    
+    print(contenido)
+    guardar_archivo("ranking dream team", contenido.replace("|", ","))
+
+crear_ranking(lista_dream_team)
