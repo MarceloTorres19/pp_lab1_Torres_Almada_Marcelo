@@ -8,7 +8,7 @@ def leer_archivo(nombre_archivo: str):
     Retorna una lista de diccionarios que representan los héroes.
     """
     lista = []
-    with open(nombre_archivo) as archivo:
+    with open(nombre_archivo, 'r', encoding="utf-8") as archivo:
         data = json.load(archivo)
         lista = data["jugadores"]
     
@@ -17,22 +17,20 @@ def leer_archivo(nombre_archivo: str):
 lista_dream_team = leer_archivo(r"C:\Users\Torre\Documents\Parcial_Programacion_I\pp_lab1_Torres_Almada_Marcelo\dt.json")
 
 def mostrar_lista_clave(lista:list, clave:str):
-    contenido =""
+    mensaje=""
     for jugador in lista:
-        mensaje = "{0} - {1}".format(jugador["nombre"], jugador[clave])
-        contenido += mensaje+"\n"
-    print(contenido.rstrip())
+        mensaje += "{0} - {1}\n".format(jugador["nombre"], jugador[clave])
+    print(mensaje.rstrip())
 
 #mostrar_lista_clave(lista_dream_team, "posicion")
 
 def mostrar_jugador_estadistica(lista:list):
     indice = input("Ingrese el indice. ")
     indice = int(indice)
-    contenido = "Nombre: {0}\n".format(lista[indice]["nombre"])
+    mensaje = "Nombre: {0}".format(lista[indice]["nombre"])
     for clave, valor in lista[indice]["estadisticas"].items():
-        mensaje = "{0}: {1}".format(clave.capitalize(), valor)
-        contenido += mensaje +"\n"
-    print(contenido.rstrip())
+        mensaje += "\n{0}: {1}".format(clave.capitalize(), valor)
+    print(mensaje)
 
 #mostrar_jugador_estadistica(lista_dream_team)
 def validar_jugador_ingresado(lista:list):
@@ -55,7 +53,7 @@ def mostrar_jugador_logros(lista:list):
                                  lista[jugador_encontrado]["logros"])
     return mensaje
 
-# mostrar_jugador_logros(lista_dream_team)
+#print(mostrar_jugador_logros(lista_dream_team))
 
 '''
 Calcular y mostrar el promedio de puntos por partido de todo el equipo del Dream
@@ -257,11 +255,8 @@ def mostrar_jugadores_mayor_al_dato_ingresado_ordenado_por_posicion(lista):
 #mostrar_jugadores_mayor_al_dato_ingresado_ordenado_por_posicion(lista_dream_team)
 
 '''
-Calcular de cada jugador cuál es su posición en cada uno de los siguientes ranking
-● Puntos
-● Rebotes
-● Asistencias
-● Robos
+Calcular de cada jugador cuál es su posición en cada uno de los siguientes ranking 
+● Puntos ● Rebotes ● Asistencias ● Robos
 '''
 
 def ordenar_y_listar_por_clave(lista_original:list, clave:str)->list:
@@ -319,4 +314,43 @@ def crear_ranking(lista:list):
     print(contenido)
     guardar_archivo("ranking dream team", contenido.replace("|", ","))
 
-crear_ranking(lista_dream_team)
+#crear_ranking(lista_dream_team)
+
+def imprimir_menu():
+    menu = '''Menú de opciones:
+    1.  Mostrar a los miembros del Dream Team junto a su posición.
+    2.  Mostrar estadisticas del jugador seleccionado, ingresando su indice.
+    3.  Exportar a un archivo CSV las estadisticas obtenidas en el punto 2.
+    4.  Ingresar el nombre de un jugador y mostrar sus logros.
+    5.  Calcular y mostrar el promedio de puntos por partido de todo el equipo del Dream Team, ordenado por 
+        nombre de manera ascendente.
+    6.  Ingresar el nombre de un jugador y mostrar si pertenece al Salón de la Fama.
+    7.  Calcular y mostrar el jugador con la mayor cantidad de rebotes totales.
+    8.  Calcular y mostrar el jugador con el mayor porcentaje de tiros de campo.
+    9.  Calcular y mostrar el jugador con la mayor cantidad de asistencias totales.
+    10. Ingresar un valor y mostrar los jugadores que han promediado más puntos por partido que ese valor.
+    11. Ingresar un valor y mostrar los jugadores que han promediado más rebotes por partido que ese valor.
+    12. Ingresar un valor y mostrar los jugadores que han promediado más asistencias por partido que ese valor.
+    13. Calcular y mostrar el jugador con la mayor cantidad de robos totales.
+    14. Calcular y mostrar el jugador con la mayor cantidad de bloqueos totales.
+    15. Ingresar un valor y mostrar los jugadores que hayan tenido un porcentaje de tiros libres superior a ese valor.
+    16. Calcular y mostrar el promedio de puntos por partido del equipo excluyendo al jugador con la menor cantidad 
+        de puntos por partido.
+    17. Calcular y mostrar el jugador con la mayor cantidad de logros obtenidos.
+    18. Ingresar un valor y mostrar los jugadores que hayan tenido un porcentaje de tiros triples superior a ese valor.
+    19. Calcular y mostrar el jugador con la mayor cantidad de temporadas jugadas.
+    20. Ingresar un valor y mostrar los jugadores , ordenados por posición en la cancha, que hayan tenido un porcentaje
+        de tiros de campo superior a ese valor.
+    23. Mostrar el ranking por cantidad de puntos, rebotes, asistencias y robos.
+    0. Salir.'''
+    print(menu)
+    
+
+def validar_respuesta():
+    patron = r'^([0-9]|1[0-9]|20|23)$'
+    respuesta = input("Ingrese la opción deseada: ")
+    while not re.match(patron, respuesta):
+        respuesta= input("Respuesta inválida. Por favor, ingrese una opción del menú: ")
+
+    return int(respuesta)
+    
