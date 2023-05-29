@@ -2,11 +2,16 @@ import json
 import re
 from tabulate import tabulate
 
-def leer_archivo(nombre_archivo: str):
+def leer_archivo(nombre_archivo: str) -> list:
     """
-    Lee un archivo JSON y devuelve una lista de héroes.
-    Recibe el nombre del archivo JSON a leer.
-    Retorna una lista de diccionarios que representan los héroes.
+    Lee un archivo JSON y devuelve una lista de jugadores.
+
+    Args:
+        nombre_archivo (str): El nombre o la ruta del archivo JSON a leer.
+
+    Returns:
+        lista (list): Una lista de diccionarios que representan a los jugadores.
+
     """
     lista = []
     with open(nombre_archivo, 'r', encoding="utf-8") as archivo:
@@ -17,26 +22,62 @@ def leer_archivo(nombre_archivo: str):
 
 lista_dream_team = leer_archivo(r"C:\Users\Torre\Documents\Parcial_Programacion_I\pp_lab1_Torres_Almada_Marcelo\dt.json")
 
-def guardar_archivo(nombre_archivo, contenido):
+def guardar_archivo(nombre_archivo, contenido) -> str:
+    """
+    Guarda el contenido en un archivo especificado.
+
+    Args:
+        nombre_archivo (str): El nombre o la ruta del archivo a guardar.
+        contenido (str): El contenido a escribir en el archivo.
+
+    Returns:
+        mensaje (str): Un mensaje que indica si se creó exitosamente el archivo 
+        o si ocurrió un error.
+
+    """
     try:
         with open(nombre_archivo, mode='w+') as archivo:
             archivo.write(contenido)
-            mensaje = f'Se creó el archivo: {nombre_archivo}'
+            mensaje = f'\nSe creó el archivo: {nombre_archivo}'
             return mensaje
     except Exception as e:
-        mensaje = f'Error al crear el archivo: {nombre_archivo}. {str(e)}'
+        mensaje = f'\nError al crear el archivo: {nombre_archivo}. {str(e)}'
         return mensaje
 
-def mostrar_lista_clave(lista:list, clave:str):
-    mensaje=""
+def mostrar_lista_jugador_y_clave(lista:list, clave:str) -> str:
+    """
+    Muestra jugador junto a la respectiva clave asociada al diccionario jugador.
+
+    Args:
+        lista (list): La lista de diccionarios que representa a cada jugador
+        del Dream Team.
+        clave (str): La clave del diccionario a imprimir .
+
+    Returns:
+        mensaje (str): Un mensaje formateado con el nombre del jugador y la 
+        clave correspondiente.
+
+    """
+    mensaje="\nNombre del jugador junto a su posición:"
     for jugador in lista:
-        mensaje += "{0} - {1}\n".format(jugador["nombre"], jugador[clave])
+        mensaje += "\n{0} - {1}".format(jugador["nombre"], jugador[clave])
     
-    return mensaje.rstrip()
+    return mensaje
 
 
-def mostrar_jugador_estadistica(lista:list):
-    indices= "Estos son los indices junto a los jugadores que representan:"
+def mostrar_jugador_estadistica(lista:list) -> int:
+    """
+    Muestra las estadisticas que pertenecen al jugador ingresado a traves de su indice.
+
+    Args:
+        lista (list): La lista de diccionarios que representa a cada jugador del 
+        Dream Team.
+
+    Returns:
+        indice (int): Un numero entero que representa al indice del jugador elegido.
+
+    """
+    indices= "\nEstos son los indices junto a los jugadores que representan:"
     for indice in range(len(lista)):
         indices +="\n{0}.{1}".format(str(indice),lista[indice]["nombre"])
     print(indices)
@@ -46,16 +87,28 @@ def mostrar_jugador_estadistica(lista:list):
         print("\n"+indices)
         indice = input("Ingreso incorrecto. Por favor ingrese el indice del jugador buscado. ")        
     indice = int(indice)
-    mensaje = "Nombre: {0}".format(lista[indice]["nombre"])
+    mensaje = "\nNombre: {0}".format(lista[indice]["nombre"])
     for clave, valor in lista[indice]["estadisticas"].items():
         mensaje += "\n{0}: {1}".format(clave.capitalize(), valor)
     print(mensaje)
 
     return indice
 
-#Punto 3
+def guardar_csv_jugador_punto_dos(lista:list ,indice:int) -> str:
+    '''
+    Guarda las estadísticas de un jugador en formato CSV.
+    La función toma la lista de jugadores, selecciona el jugador en el índice especificado y
+    guarda sus estadísticas
+    en un archivo CSV. El nombre del archivo se genera a partir del nombre del jugador.
 
-def guardar_csv_jugador_punto_dos(lista:list ,indice:int):
+    Args:
+        lista (list): La lista de jugadores.
+        indice (int): El índice del jugador cuyas estadísticas se guardarán.
+
+    Returns:
+        str: Un mensaje que indica si se creó exitosamente el archivo CSV o si ocurrió un 
+        error.
+    '''
     contenido ="Nombre"
     mensaje="\n"+lista[indice]["nombre"]+""
     for clave, valor in lista[indice]["estadisticas"].items(): 
@@ -66,8 +119,20 @@ def guardar_csv_jugador_punto_dos(lista:list ,indice:int):
     
     return guardar_archivo(nombre_archivo, contenido)
 
+def validar_jugador_ingresado(lista:list) -> str:
+    '''
+    Valida si un jugador ingresado se encuentra en una lista de jugadores.
+    La función recorre la lista de jugadores y solicita al usuario ingresar el nombre de 
+    un jugador. Luego, busca el nombre del jugador ingresado en la lista de jugadores. 
+    Si se encuentra una coincidencia, se devuelve el nombre del jugador encontrado.
 
-def validar_jugador_ingresado(lista:list):
+    Args:
+        lista (list): La lista de jugadores.
+
+    Returns:
+        nombre (str): El nombre del jugador encontrado.
+
+    '''
     jugadores = str([(diccionario["nombre"]).lower()  for diccionario in lista])
     jugador_buscado = input("Ingrese el nombre del jugador.")
     while not (re.search(jugador_buscado.lower(), jugadores)):
@@ -75,9 +140,21 @@ def validar_jugador_ingresado(lista:list):
     for jugador in lista:
         if re.search(jugador_buscado.lower(), (jugador["nombre"]).lower()):
             nombre = jugador["nombre"]
+    print("Jugador encontrado: " +nombre)
     return nombre
 
-def mostrar_jugador_logros(lista:list):
+def mostrar_jugador_logros(lista:list) -> str:
+    '''
+    Muestra los logros de un jugador específico en una lista de jugadores.
+    La función solicita al usuario ingresar el nombre de un jugador y valida si se 
+    encuenntra en la lista. De ser asi, se muestra el nombre del jugador junto con sus logros.
+
+    Args:
+        lista (list): La lista de jugadores.
+
+    Returns:
+        mensaje (str): Un mensaje que muestra el nombre del jugador y sus logros.
+    '''
     jugador_buscado = validar_jugador_ingresado(lista)
     for indice in range(len(lista)):
         if jugador_buscado == lista[indice]["nombre"]:
@@ -87,16 +164,25 @@ def mostrar_jugador_logros(lista:list):
                                  lista[jugador_encontrado]["logros"])
     return mensaje
 
+def ordenar_alfabeticamente_por_clave_ascendente(lista:list, clave:str) -> list:
+    '''
+    Ordena una lista de diccionarios alfabéticamente ascendente según el valor de una clave específica.
 
-'''
-Calcular y mostrar el promedio de puntos por partido de todo el equipo del Dream
-Team, ordenado por nombre de manera ascendente
-'''
-def ordenar_alfabeticamente_por_clave_ascendente(lista:list, clave:str):
+    La función toma una lista de diccionarios y ordena los elementos alfabéticamente ascendente (a-z)
+    según el valor de la clave especificada. La ordenación se realiza utilizando el algoritmo de ordenamiento
+    de burbuja modificado.
+
+    Args:
+        lista (list): La lista de diccionarios a ordenar.
+        clave (str): La clave por la cual se ordenara alfabeticamente.
+
+    Returns:
+        lista_ordenada (list): Una nueva lista con los diccionarios ordenados alfabéticamente.
+
+    '''
     lista_ordenada = lista[:]
     rango_a = len(lista_ordenada)
     flag_swap = True
-
     while(flag_swap):
         flag_swap = False
         rango_a = rango_a - 1
@@ -117,26 +203,51 @@ def ordenar_alfabeticamente_por_clave_ascendente(lista:list, clave:str):
     return lista_ordenada
 
 
-def calcular_y_mostrar_promedio_puntos_orden_alfa_asc(lista:list):
+def calcular_y_mostrar_promedio_puntos_orden_alfa_asc(lista:list) -> str:
+    '''
+    Calcula y muestra el promedio de puntos por partido de cada jugador ordenado alfabeticamente (a-z),
+    ademas del promedio total del equipo.
+
+    La función calcula el promedio de puntos por partido de cada jugador en la lista de jugadores (ya 
+    ordenada por nombre) y muestra el nombre de cada jugador junto con su promedio de puntos por partido y
+    el promedio total del equipo.
+
+    Args:
+        lista (list): La lista de jugadores.
+
+    Returns:
+        contenido (str): Un mensaje con los nombres y promedios de puntos por partido de los jugadores,
+                         seguido del promedio del equipo.
+
+    '''
     lista_ordenada = ordenar_alfabeticamente_por_clave_ascendente(lista,"nombre")
     suma = 0
-    contenido=""
+    contenido="\nPromedio de puntos por partido de cada jugador. "
     for jugador in lista_ordenada:
         suma += jugador["estadisticas"]["promedio_puntos_por_partido"]
-        mensaje = "{0}: {1}".format(jugador["nombre"], jugador["estadisticas"]["promedio_puntos_por_partido"])
-        contenido += mensaje+ "\n"
+        mensaje = "\n{0}: {1}".format(jugador["nombre"], jugador["estadisticas"]["promedio_puntos_por_partido"])
+        contenido += mensaje
     
     promedio = suma/ len(lista_ordenada)
-    contenido += "Promedio del equipo: "+str(promedio)
+    contenido += "\n\nPromedio del equipo: "+str(promedio)
     
     return contenido
 
 
-'''
-Permitir al usuario ingresar el nombre de un jugador y mostrar si ese jugador es
-miembro del Salón de la Fama del Baloncesto.
-'''
-def es_miembro_salon_de_la_fama(lista:list):
+def es_miembro_salon_de_la_fama(lista:list) -> str:
+    '''
+    Verifica si un jugador es miembro del Salón de la Fama del baloncesto (Universitario o no).
+
+    La función toma una lista de jugadores y verifica los logros de cada jugador para determinar
+    si es miembro del Salón de la Fama del baloncesto. Los logros se obtienen utilizando la función
+    mostrar_jugador_logros.
+
+    Args:
+        lista (list): La lista de jugadores.
+
+    Returns:
+        mensaje (str): Un mensaje que indica si el jugador es miembro del Salón de la Fama o no.
+    '''
     logros = mostrar_jugador_logros(lista)
     if "Baloncesto Universitario" in logros:
         mensaje = "Es miembro del Salón de la Fama del Baloncesto Universitario"
@@ -147,14 +258,27 @@ def es_miembro_salon_de_la_fama(lista:list):
 
     return mensaje
 
-
 '''
 7) Calcular y mostrar el jugador con la mayor cantidad de rebotes totales.
 8) Calcular y mostrar el jugador con el mayor porcentaje de tiros de campo.
 9) Calcular y mostrar el jugador con la mayor cantidad de asistencias totales.
 '''
 
-def calcular_y_mostrar_maximo_estadistica_clave(lista:list, clave:str):
+def calcular_y_mostrar_maximo_estadistica_clave(lista:list, clave:str) -> str:
+    '''
+    Calcula y muestra el jugador con el máximo valor de una estadística.
+
+    La función recorre la lista de jugadores y busca aquel jugador que tenga el máximo valor
+    para la estadística especificada por la clave. Luego, muestra el nombre del jugador y el valor
+    máximo de la estadística.
+
+    Args:
+        lista (list): La lista de jugadores.
+        clave (str): La clave de la estadística a considerar.
+
+    Returns:
+        mensaje (str): Un mensaje que indica el jugador o jugadores con el máximo valor de la estadística.
+    '''
     max_clave = lista[0]["estadisticas"][clave]
     lista_maximos=[lista[0]["nombre"]]
     for jugador in lista[1:]:
@@ -167,7 +291,7 @@ def calcular_y_mostrar_maximo_estadistica_clave(lista:list, clave:str):
             max_clave = clave_valor
             lista_maximos.append(" y "+ jugador["nombre"])
     
-    mensaje="La estadistica de mayor {0} pertenece a ".format(clave.replace("_", " "))
+    mensaje="\nLa estadistica de mayor {0} pertenece a ".format(clave.replace("_", " "))
     if len(lista_maximos) ==1:
         mensaje += lista_maximos[0]
     else:
@@ -186,11 +310,26 @@ más rebotes por partido que ese valor.
 más asistencias por partido que ese valor.
 '''
 
-def jugador_con_valor_mayor_al_ingresado(lista:list, clave:str):
+def jugador_con_valor_mayor_al_ingresado(lista:list, clave:str) -> str:
+    '''
+    Busca los jugadores cuya estadística especificada supere un valor ingresado.
+
+    La función solicita al usuario que ingrese un valor y luego verifica cada jugador de la lista
+    para determinar si su estadística asociada a la clave supera dicho valor. Si se encuentran jugadores
+    que cumplan esta condición, se muestra el nombre del jugador y el valor de la estadística.
+
+    Args:
+        lista (list): La lista de jugadores.
+        clave (str): La clave de la estadística a considerar.
+
+    Returns:
+        mensaje (str): Un mensaje que indica los jugadores que superan el valor ingresado para la 
+                       estadística o si no hay jugadores que lo superen.
+    '''
     valor_ingresado = input("Ingrese un valor. ")
     valor_ingresado = float(valor_ingresado)
     flag_primer_ingreso = 0
-    mensaje = ("En cuanto a {0} los siguientes jugadores superan el valor" 
+    mensaje = ("\nEn cuanto a {0} los siguientes jugadores superan el valor" 
                " ingresado :").format(clave.replace("_", " "))
 
     for jugador in lista:
@@ -200,7 +339,7 @@ def jugador_con_valor_mayor_al_ingresado(lista:list, clave:str):
             flag_primer_ingreso = 1
         
     if flag_primer_ingreso ==0:
-        mensaje = "No hay ningun jugador que supere ese {0}.".format(clave.replace("_", " "))
+        mensaje = "\nNo hay ningun jugador que supere ese {0}.".format(clave.replace("_", " "))
     
     return mensaje
    
@@ -208,7 +347,23 @@ def jugador_con_valor_mayor_al_ingresado(lista:list, clave:str):
 16) Calcular y mostrar el promedio de puntos por partido del equipo excluyendo al
 jugador con la menor cantidad de puntos por partido.
 '''
-def calcular_y_mostrar_minimo_estadistica_clave(lista:list, clave:str):
+def calcular_y_mostrar_minimo_estadistica_clave(lista:list, clave:str) -> tuple:
+    '''
+    Calcula el valor mínimo de una estadística específica y lo muestra.
+
+    La función recorre la lista de jugadores y compara el valor de la estadística
+    asociada a la clave especificada. Encuentra el valor mínimo y lo devuelve como
+    un número de tipo float.
+
+    Args:
+        lista (list): La lista de jugadores.
+        clave (str): La clave de la estadística a considerar.
+
+    Returns:
+        contador,clave_valor (tuple): Una tupla de valores donde el primer valor 
+        representa la cantidad de minimos encontrados y el segundo el valor unitario
+        del minimo encontrado.
+    '''
     min_clave = lista[0]["estadisticas"][clave]
     contador = 0
     for jugador in lista[1:]:
@@ -219,24 +374,58 @@ def calcular_y_mostrar_minimo_estadistica_clave(lista:list, clave:str):
         elif (clave_valor == min_clave ):
             min_clave = clave_valor
             contador += 1
-    return contador*clave_valor
+    return contador,clave_valor
 
 
-def calcular_promedio_excluyendo_al_minimo(lista:list, clave:str):
-    suma = -calcular_y_mostrar_minimo_estadistica_clave(lista_dream_team, clave)
+def calcular_promedio_excluyendo_al_minimo(lista:list, clave:str) -> str:
+    '''
+    Calcula el promedio de una estadística específica excluyendo al jugador o jugadores 
+    con el valor mínimo.
+
+    La función utiliza la función 'calcular_y_mostrar_minimo_estadistica_clave' para obtener 
+    la cantidad de jugadores con valor de estadistica minimos y el valor mínimo de la estadística 
+    especificada. Luego, excluye a esos jugadores del cálculo del promedio.
+
+    Args:
+        lista (list): La lista de jugadores.
+        clave (str): La clave de la estadística a considerar.
+
+    Returns:
+        mensaje (str): El mensaje que muestra el promedio del equipo excluyendo al jugador o 
+                       jugadores con el valor mínimo de la estadística.
+    '''
+    valores_minimos = calcular_y_mostrar_minimo_estadistica_clave(lista_dream_team, clave)
+    cantidad_minimos, valor_minimo = valores_minimos
+    suma = -cantidad_minimos * valor_minimo
     for jugador in lista:
         suma += jugador["estadisticas"][clave]
-    promedio = suma/ (len(lista)-1)
-    contenido = "Promedio del equipo: "+str(promedio)
+    promedio = suma/ (len(lista)-cantidad_minimos)
+    mensaje = ("\nPromedio del equipo quitando al jugador o jugadores con la menor"
+               " cantidad de {0} ({1}): {2}").format(clave.replace("_", " "),
+                                                    str(cantidad_minimos * valor_minimo),
+                                                    str(promedio))
 
-    return contenido
-
-
+    return mensaje
 
 '''
 17) Calcular y mostrar el jugador con la mayor cantidad de logros obtenidos
 '''
-def calcular_y_mostrar_jugador_mas_logros(lista:list):
+def calcular_y_mostrar_jugador_mas_logros(lista:list) -> str:
+    '''
+    Calcula y muestra el jugador con la mayor cantidad de logros.
+
+    La función recorre la lista de jugadores y cuenta la cantidad de logros para cada uno. 
+    Luego, determina el jugador con la mayor cantidad de logros y muestra un mensaje indicando 
+    dicho jugador y la cantidad de logros.
+
+    Args:
+        lista (list): La lista de jugadores.
+
+    Returns:
+        mensaje (str): El mensaje que indica el jugador o jugadores con la mayor 
+        cantidad de logros y la cantidad de logros.
+    """
+    '''
     lista_logros=[]
     lista_logros_jugador=[]
     for jugador in lista:
@@ -263,10 +452,9 @@ def calcular_y_mostrar_jugador_mas_logros(lista:list):
             lista_maximos.append(" | "+ lista_logros_jugador[indice])
     
     if len(lista_maximos) ==1:
-        mensaje="El jugador con mayor cantidad de logros es "
-        mensaje += lista_maximos[0]
+        mensaje= "\nEl jugador con mayor cantidad de logros es "+ lista_maximos[0]
     else:
-        mensaje="Los jugadores con mayor cantidad de logros son "
+        mensaje="\nLos jugadores con mayor cantidad de logros son "
         for maximo in lista_maximos:
             mensaje += "{0}".format(maximo)
     mensaje+= " con un valor de {0} logros.".format(str(max_clave))
@@ -279,7 +467,25 @@ def calcular_y_mostrar_jugador_mas_logros(lista:list):
 posición en la cancha, que hayan tenido un porcentaje de tiros de campo superior a
 ese valor.
 '''
-def jugador_con_valor_mayor_al_ingresado2(lista:list, clave:str):
+def jugador_con_valor_mayor_al_ingresado_y_posicion(lista:list, clave:str) -> str:
+    '''
+    Busca los jugadores cuyo valor de una estadística supere un valor ingresado, 
+    muestra su nombre y posición.
+
+    La función solicita al usuario que ingrese un valor y compara ese valor con la
+    estadística especificada para cada jugador de la lista. Si el valor de la estadística 
+    es mayor que el valor ingresado, se muestra el nombre del jugador, su valor de 
+    estadística y su posición. Al final se genera un mensaje que indica los jugadores que
+    superan el valor ingresado junto con su posición.
+
+    Args:
+        lista (list): La lista de jugadores.
+        clave (str): La clave de la estadística a considerar.
+
+    Returns:
+        mensaje (str): El mensaje que indica los jugadores que superan el valor ingresado,
+                       su respectivo valor y posición.
+    '''
     valor_ingresado = input("Ingrese un valor. ")
     valor_ingresado = float(valor_ingresado)
     flag_primer_ingreso = 0
@@ -298,10 +504,25 @@ def jugador_con_valor_mayor_al_ingresado2(lista:list, clave:str):
     
     return mensaje
 
-def mostrar_jugadores_mayor_al_dato_ingresado_ordenado_por_posicion(lista):
+def mostrar_jugadores_mayor_al_dato_ingresado_ordenado_por_posicion(lista) -> str:
+    '''
+    Muestra los jugadores cuyo porcentaje de tiros de campo supere un valor ingresado, 
+    ordenados por posición.
+
+    La función ordena la lista de jugadores alfabeticamente por posición y luego utiliza la función 
+    "jugador_con_valor_mayor_al_ingresado_y_posicion" para encontrar los jugadores que superan un 
+    valor específico de porcentaje de tiros de campo. Finalmente, retorna el mensaje formateado.
+
+    Args:
+        lista (list): La lista de jugadores.
+
+    Returns:
+        mensaje (str): El mensaje que indica los jugadores que superan el valor ingresado de porcentaje 
+                       de tiros de campo, junto a su respectivo valor y ordenados por posición.
+    '''
     lista_ordenada = ordenar_alfabeticamente_por_clave_ascendente(lista,"posicion")
     
-    return jugador_con_valor_mayor_al_ingresado2(lista_ordenada, "porcentaje_tiros_de_campo")
+    return jugador_con_valor_mayor_al_ingresado_y_posicion(lista_ordenada, "porcentaje_tiros_de_campo")
 
 
 '''
@@ -310,6 +531,19 @@ Calcular de cada jugador cuál es su posición en cada uno de los siguientes ran
 '''
 
 def ordenar_y_listar_por_clave(lista_original:list, clave:str)->list:
+    '''
+    Ordena una lista de jugadores por una clave específica y devuelve la lista ordenada.
+
+    La función utiliza el algoritmo de ordenamiento rápido (quicksort) para ordenar la lista
+    de jugadores en base al valor de la clave especificada. Retorna la lista ordenada.
+
+    Args:
+        lista_original (list): La lista original de jugadores.
+        clave (str): La clave por la cual se va a realizar el ordenamiento.
+
+    Returns:
+        lista_ordenada (list): La lista ordenada de jugadores.
+    '''
     lista_de = []
     lista_iz = []
 
@@ -330,6 +564,18 @@ def ordenar_y_listar_por_clave(lista_original:list, clave:str)->list:
     return lista_iz
 
 def crear_lista_de_nombres(lista:list):
+    '''
+    Crea una lista de nombres de jugadores a partir de una lista de jugadores.
+
+    La función recorre la lista de jugadores y extrae el nombre de cada jugador,
+    agregándolo a una lista de nombres. Retorna la lista de nombres resultante.
+
+    Args:
+        lista (list): La lista de jugadores.
+
+    Returns:
+        lista_nombres (list): La lista de nombres de jugadores.
+    '''
     lista_nombres=[]
     lista_puntos=[]
     for jugador in lista:
@@ -339,11 +585,30 @@ def crear_lista_de_nombres(lista:list):
     return lista_nombres
 
 def crear_y_guardar_ranking(lista:list):
-    lista_nombres_ordenada_alfa = crear_lista_de_nombres(ordenar_alfabeticamente_por_clave_ascendente(lista, "nombre"))
+    '''
+    Crea un ranking de jugadores y lo guarda en un archivo CSV.
+
+    La función genera listas ordenadas por clave utilizando "ordenar_y_listar_por_clave"
+    y alfabeticamente utilizando "ordenar_alfabeticamente_por_clave_ascendente". De dichas 
+    listas se extraen unicamente los nombres de los jugadores ya ordenados, luego a través 
+    de la funcion index() se obtiene que lugar ocupa el nombre de jugador en cada lista
+    (indice) y se le suma 1 para que en el ranking aparezca de 1-12 y no de 0-11.
+    Se le da formato de tabla al mensaje utilizando el método tabulate y se imprime en 
+    consola y por ultimo se guarda en un archivo CSV.
+
+    Args:
+        lista (list): La lista de jugadores.
+
+    Returns:
+        mensaje (str): Un mensaje que indica si se creó exitosamente el archivo 
+                       o si ocurrió un error.
+    '''
     lista_puntos_totales= crear_lista_de_nombres(ordenar_y_listar_por_clave(lista, "puntos_totales"))
     lista_rebotes_totales= crear_lista_de_nombres(ordenar_y_listar_por_clave(lista, "rebotes_totales"))
     lista_asistencias_totales= crear_lista_de_nombres(ordenar_y_listar_por_clave(lista, "asistencias_totales"))
     lista_robos_totales= crear_lista_de_nombres(ordenar_y_listar_por_clave(lista, "robos_totales"))
+    lista_nombres_ordenada_alfa = crear_lista_de_nombres(ordenar_alfabeticamente_por_clave_ascendente(lista, "nombre"))
+    print(" ")
     contenido = "Jugador|Puntos|Rebotes|Asistencias|Robos"
   
     for indice in range(len(lista_nombres_ordenada_alfa)):
@@ -386,7 +651,18 @@ def imprimir_menu():
     print(menu)
     
 
-def validar_respuesta():
+def validar_respuesta() -> int:
+    '''
+    Valida una respuesta numérica ingresada por el usuario.
+
+    La función solicita al usuario que ingrese una opción del menú y valida que la 
+    respuesta sea un número entre 0-20 y 23. Si la respuesta no cumple con el patrón 
+    establecido, se solicita nuevamente al usuario que ingrese una opción válida.
+
+    Returns:
+        int(respuesta) (int): La respuesta válida ingresada por el usuario casteada
+                              a entero.
+    '''
     patron = r'^([0-9]|1[0-9]|20|23)$'
     respuesta = input("Ingrese la opción deseada: ")
     while not re.match(patron, respuesta):

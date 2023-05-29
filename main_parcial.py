@@ -10,7 +10,7 @@ def parcial_app(lista:list):
         opcion = biblioteca_parcial.validar_respuesta()
         match (opcion):
             case 1:
-                mensaje = biblioteca_parcial.mostrar_lista_clave(lista, "posicion")
+                mensaje = biblioteca_parcial.mostrar_lista_jugador_y_clave(lista, "posicion")
             case 2:
                 indice = biblioteca_parcial.mostrar_jugador_estadistica(lista)
                 flag_punto_dos = 1
@@ -63,7 +63,7 @@ def parcial_app(lista:list):
         input("\nPulse enter para continuar\n")
     
 def main():
-    lista_dream_team = biblioteca_parcial.leer_archivo(r"C:\Users\Torre\Documents\Parcial_Programacion_I\pp_lab1_Torres_Almada_Marcelo\dt.json")
+    lista_dream_team = biblioteca_parcial.leer_archivo("dt.json")
     parcial_app(lista_dream_team)
 
 main()
