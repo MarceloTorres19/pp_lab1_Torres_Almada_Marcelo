@@ -650,6 +650,7 @@ def imprimir_menu():
     24. Mostrar la cantidad de jugadores por posición.
     25. Mostrar la lista de jugadores ordenadas por la cantidad de All-Star de forma descendente.
     26. Mostrar que jugadores tienen los records de las distintas estadísticas.
+    27. Mostrar al jugador o jugadores con mejores estadisticas.
     0. Salir.'''
     print(menu)
     
@@ -666,7 +667,7 @@ def validar_respuesta() -> int:
         int(respuesta) (int): La respuesta válida ingresada por el usuario casteada
                               a entero.
     '''
-    patron = r'^([0-9]|1[0-9]|20|2[3-6])$'
+    patron = r'^([0-9]|1[0-9]|20|2[3-7])$'
     respuesta = input("Ingrese la opción deseada: ")
     while not re.match(patron, respuesta):
         respuesta= input("Respuesta inválida. Por favor, ingrese una opción del menú: ")
@@ -719,7 +720,8 @@ def ordenar_y_listar_por_clave_v2(lista_original:list, clave:str)->list:
     Ordena una lista de jugadores por una clave específica y devuelve la lista ordenada.
 
     La función utiliza el algoritmo de ordenamiento rápido (quicksort) para ordenar la lista
-    de jugadores en base al valor de la clave especificada. Retorna la lista ordenada.
+    de jugadores en base al valor de la clave especificada. Retorna la lista ordenada. Funciona
+    para listas de diccionarios.
 
     Args:
         lista_original (list): La lista original de jugadores.
@@ -749,7 +751,23 @@ def ordenar_y_listar_por_clave_v2(lista_original:list, clave:str)->list:
 
 
 
-def mostrar_lista_all_star_descendiente(lista:list):
+def mostrar_lista_all_star_descendiente(lista:list) -> str:
+    """
+    La función busca los logros de cada jugador y cuenta la cantidad de veces que han sido
+    seleccionados como All-Star. Luego, ordena la lista de jugadores por la cantidad de
+    veces All-Star en orden descendente y genera un mensaje que muestra los jugadores ordenados
+    de manera descendente junto con la cantidad de veces que han sido All-Star.
+
+    Args:
+        lista (list): Una lista de diccionarios de jugadores, donde cada diccionario debe
+                      contener las claves "nombre" y "logros".
+
+    Returns:
+        mensaje (str): Un mensaje en formato de cadena de texto que muestra los jugadores ordenados
+                       por la cantidad de veces All-Star, junto con la cantidad de veces que han sido
+                       seleccionados.
+
+    """
     lista_all_star=[]
     
     for jugador in lista:
@@ -777,11 +795,23 @@ Determinar qué jugador tiene las mejores estadísticas en cada valor. La salida
 Mayor cantidad de temporadas: Karl Malone (19)
 Mayor cantidad de puntos totales: Karl Malon (36928)
 '''
-def jugadores_con_mejores_estadisticas(lista:list):
+def crear_lista_jugadores_mejores_stats(lista:list) -> list:
+    '''
+    Crea la lista de mejores stats con su respectivo jugador.
+
+    Esta función itera sobre cada valor de cada estadistica para obtener los maximos
+    y crea una nueva lista de diccionarios donde cada diccionario es una estadistica
+    y las claves son nombre del jugador, nombre de la estadistica y valor de la misma.
+
+    Args:
+        lista_original (list): La lista original de jugadores.
+
+    Returns:
+        lista_maximos (list): lista de records y sus respectivos dueños.
+    '''
     lista_maximos=[]
     for clave, valor in lista[0]["estadisticas"].items():
         lista_maximos.append({"nombre":lista[0]["nombre"],"nombre_stat": clave ,"maximo": valor})
-    print(lista_maximos)
     for jugador in lista[1:]:
         indice = 0
         for clave, valor in jugador["estadisticas"].items():
@@ -791,7 +821,24 @@ def jugadores_con_mejores_estadisticas(lista:list):
                 lista_maximos[indice]["nombre"] += " | "+ jugador["nombre"]
         
             indice +=1 
-    print(lista_maximos)      
+
+    return lista_maximos
+
+def jugadores_con_mejores_estadisticas(lista:list) -> str:
+    '''
+    Muestra los nombres de los jugadores que tienen los records en estadísticas.
+
+    Utiliza la funcion "crear_lista_jugadores_mejores_stats" para crear la lista de records 
+    y sus respectivos jugadores dueños edl record y retorna el mensaje formateado.
+
+    Args:
+        lista_original (list): La lista original de jugadores.
+
+    Returns:
+        mensaje (str): El mensaje formateado con los records de las distintas estadísticas y
+                       el jugador dueño del record.
+    '''
+    lista_maximos = crear_lista_jugadores_mejores_stats(lista)
     mensaje =""
     for stat in lista_maximos:
         mensaje +="\nMayor cantidad de {0}: {1} ({2})".format(stat["nombre_stat"],
@@ -800,5 +847,46 @@ def jugadores_con_mejores_estadisticas(lista:list):
     
     return mensaje
 
-#print(jugadores_con_mejores_estadisticas(lista_dream_team))
+def jugador_con_mejores_stats(lista:list) -> str:
+    '''
+    Determina al jugador con mejores stats.
+
+    La funcion evalua cuantas veces aparece el nombre del jugador en la "lista_maximos"
+    creada a partir de la función "crear_lista_jugadores_mejores_stats" y luego retorna
+    el mensaje con el jugador/es con mejores stats
+
+    Args:
+        lista_original (list): La lista original de jugadores.
+
+    Returns:
+        mensaje (str): El mensaje formateado con el o los jugadores con mayores records
+        y el valor.
+    '''
+    lista_maximos = crear_lista_jugadores_mejores_stats(lista)
+    maximo_valor =0
+    lista_nombres_maximos= []
+    for jugador in lista:
+        contador =0
+        for stat in lista_maximos:
+            if jugador["nombre"] in stat["nombre"]:
+                contador +=1    
+        if contador > maximo_valor:
+            maximo_valor = contador
+            lista_nombres_maximos.clear()
+            lista_nombres_maximos.append(jugador["nombre"])
+        elif contador == maximo_valor:
+            maximo_valor = contador
+            lista_nombres_maximos.append(" | "+jugador["nombre"])
+    
+    mensaje = "Los jugadores con mejores estadisticas son "
+    if len(lista_nombres_maximos)== 1:
+        mensaje = "El jugador con mejor estadistica es: {0} ".format(lista_nombres_maximos)                                                                                    
+    else:
+        for maximo in lista_nombres_maximos:
+            mensaje += "{0}".format(maximo.replace(",", " "))
+    mensaje+= " con {0} records.".format(str(maximo_valor))
+    
+    return mensaje
+
+
 

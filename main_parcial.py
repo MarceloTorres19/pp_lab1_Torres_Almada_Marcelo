@@ -62,10 +62,11 @@ def parcial_app(lista:list):
                 mensaje = biblioteca_parcial.mostrar_lista_all_star_descendiente(lista)
             case 26:
                 mensaje = biblioteca_parcial.jugadores_con_mejores_estadisticas(lista)
+            case 27:
+                mensaje = biblioteca_parcial.jugador_con_mejores_stats(lista)
             case 0:     
                 break
         print(mensaje)
-
         input("\nPulse enter para continuar\n")
     
 def main():
