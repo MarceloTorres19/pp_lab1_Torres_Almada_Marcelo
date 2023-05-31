@@ -20,7 +20,7 @@ def leer_archivo(nombre_archivo: str) -> list:
     
     return lista
 
-lista_dream_team = leer_archivo(r"C:\Users\Torre\Documents\Parcial_Programacion_I\pp_lab1_Torres_Almada_Marcelo\dt.json")
+lista_dream_team = leer_archivo("dt.json")
 
 def guardar_archivo(nombre_archivo, contenido) -> str:
     """
@@ -647,6 +647,9 @@ def imprimir_menu():
     19. Calcular y mostrar el jugador con la mayor cantidad de temporadas jugadas.
     20. Ingresar un valor y mostrar los jugadores , ordenados por posición en la cancha, que hayan tenido un porcentaje de tiros de campo superior a ese valor.
     23. Mostrar el ranking por cantidad de puntos, rebotes, asistencias y robos.
+    24. Mostrar la cantidad de jugadores por posición.
+    25. Mostrar la lista de jugadores ordenadas por la cantidad de All-Star de forma descendente.
+    26. Mostrar que jugadores tienen los records de las distintas estadísticas.
     0. Salir.'''
     print(menu)
     
@@ -663,10 +666,139 @@ def validar_respuesta() -> int:
         int(respuesta) (int): La respuesta válida ingresada por el usuario casteada
                               a entero.
     '''
-    patron = r'^([0-9]|1[0-9]|20|23)$'
+    patron = r'^([0-9]|1[0-9]|20|2[3-6])$'
     respuesta = input("Ingrese la opción deseada: ")
     while not re.match(patron, respuesta):
         respuesta= input("Respuesta inválida. Por favor, ingrese una opción del menú: ")
 
     return int(respuesta)
     
+'''
+Determinar la cantidad de jugadores que hay por cada posición.
+Ejemplo:
+Base: 2
+Alero: 3
+'''
+def contar_jugador_por_posicion(lista:list):
+    contador_ala_pivot = 0
+    contador_base = 0
+    contador_alero = 0
+    contador_pivot = 0
+    contador_escolta = 0
+    for jugador in lista:
+        if jugador["posicion"]=="Alero":
+            contador_alero += 1
+        elif jugador["posicion"]=="Base":
+            contador_base += 1
+        elif jugador["posicion"]=="Ala-Pivot":
+            contador_ala_pivot += 1
+        elif jugador["posicion"]=="Escolta":
+            contador_escolta += 1
+        else:
+            contador_pivot += 1
+
+    mensaje = ("\nCantidad de jugadores por posición.\nAla-Pivot: {0}\nAlero: {1} "
+                "\nBase: {2}\nEscolta: {3}\nPivot: {4}").format(contador_ala_pivot,
+                                                                 contador_alero,
+                                                                 contador_base,
+                                                                 contador_escolta,
+                                                                 contador_pivot)
+    
+    return mensaje
+
+#print(contar_jugador_por_posicion(lista_dream_team))
+
+'''
+Mostrar la lista de jugadores ordenadas por la cantidad de All-Star de forma descendente. La salida por pantalla debe tener un formato similar a este:
+Michael Jordan (14 veces All Star)
+Magic Johnson (12 veces All-Star)
+'''
+
+def ordenar_y_listar_por_clave_v2(lista_original:list, clave:str)->list:
+    '''
+    Ordena una lista de jugadores por una clave específica y devuelve la lista ordenada.
+
+    La función utiliza el algoritmo de ordenamiento rápido (quicksort) para ordenar la lista
+    de jugadores en base al valor de la clave especificada. Retorna la lista ordenada.
+
+    Args:
+        lista_original (list): La lista original de jugadores.
+        clave (str): La clave por la cual se va a realizar el ordenamiento.
+
+    Returns:
+        lista_ordenada (list): La lista ordenada de jugadores.
+    '''
+    lista_de = []
+    lista_iz = []
+
+    if(len(lista_original)<=1):
+        return lista_original
+    else:
+        pivot = lista_original[0][clave]
+        for jugador in lista_original[1:]:
+            if(jugador[clave] < pivot):
+                lista_de.append(jugador)
+            else:
+                lista_iz.append(jugador)
+    
+    lista_iz = ordenar_y_listar_por_clave_v2(lista_iz, clave)
+    lista_iz.append(lista_original[0]) 
+    lista_de = ordenar_y_listar_por_clave_v2(lista_de, clave)
+    lista_iz.extend(lista_de) 
+    return lista_iz
+
+
+
+def mostrar_lista_all_star_descendiente(lista:list):
+    lista_all_star=[]
+    
+    for jugador in lista:
+        contador=0
+        for logro in jugador["logros"]:
+            match= re.search(r'^\d+ veces All-Star', logro)
+            if match:
+                contador = int((re.search(r'^\d+', logro)).group(0))         
+        lista_all_star.append({"nombre":jugador["nombre"],"veces_all_star":contador})
+    
+    lista_ordenada = ordenar_y_listar_por_clave_v2(lista_all_star, "veces_all_star")
+    mensaje ="Jugadores ordenados por cantidad de veces All-Star."
+    for jugador in lista_ordenada:
+        mensaje += "\n{}: {} veces All-Star.".format(jugador["nombre"], 
+                                                     jugador["veces_all_star"])
+
+    return mensaje
+
+
+#print(mostrar_lista_all_star_descendiente(lista_dream_team))
+
+'''
+
+Determinar qué jugador tiene las mejores estadísticas en cada valor. La salida por pantalla debe tener un formato similar a este:
+Mayor cantidad de temporadas: Karl Malone (19)
+Mayor cantidad de puntos totales: Karl Malon (36928)
+'''
+def jugadores_con_mejores_estadisticas(lista:list):
+    lista_maximos=[]
+    for clave, valor in lista[0]["estadisticas"].items():
+        lista_maximos.append({"nombre":lista[0]["nombre"],"nombre_stat": clave ,"maximo": valor})
+    print(lista_maximos)
+    for jugador in lista[1:]:
+        indice = 0
+        for clave, valor in jugador["estadisticas"].items():
+            if valor > lista_maximos[indice]["maximo"]:
+                lista_maximos[indice]= {"nombre":jugador["nombre"],"nombre_stat": clave  ,"maximo": valor}
+            elif valor == lista_maximos[indice]["maximo"]:
+                lista_maximos[indice]["nombre"] += " | "+ jugador["nombre"]
+        
+            indice +=1 
+    print(lista_maximos)      
+    mensaje =""
+    for stat in lista_maximos:
+        mensaje +="\nMayor cantidad de {0}: {1} ({2})".format(stat["nombre_stat"],
+                                                            stat["nombre"],
+                                                            stat["maximo"])
+    
+    return mensaje
+
+#print(jugadores_con_mejores_estadisticas(lista_dream_team))
+

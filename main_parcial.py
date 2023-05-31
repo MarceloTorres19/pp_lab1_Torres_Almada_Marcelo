@@ -56,6 +56,12 @@ def parcial_app(lista:list):
                 mensaje = biblioteca_parcial.mostrar_jugadores_mayor_al_dato_ingresado_ordenado_por_posicion(lista)
             case 23:
                 mensaje = biblioteca_parcial.crear_y_guardar_ranking(lista)
+            case 24:
+                mensaje = biblioteca_parcial.contar_jugador_por_posicion(lista)
+            case 25:
+                mensaje = biblioteca_parcial.mostrar_lista_all_star_descendiente(lista)
+            case 26:
+                mensaje = biblioteca_parcial.jugadores_con_mejores_estadisticas(lista)
             case 0:     
                 break
         print(mensaje)
